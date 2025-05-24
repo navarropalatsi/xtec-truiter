@@ -1,0 +1,17 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <div class="card-body">
+            <h2 class="card-title">Iniciar Sessió</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <a href="{% url 'signup' %}" class="btn btn-link">No tens compte? Registra't</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

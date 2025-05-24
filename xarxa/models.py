@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Relació 1 a 1
     bio = models.TextField(max_length=500, blank=True)
-    profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to="profiles/", blank=True, null=True, default="profiles/default.jpg"
+    )
     location = models.CharField(max_length=100, blank=True)
     website = models.URLField(blank=True)
     followers = models.ManyToManyField(
@@ -21,6 +24,7 @@ class Post(models.Model):
     repost = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )  # Per repostar
+
     def __str__(self):
         return f"{self.author.username}: \"{self.content}\" - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 

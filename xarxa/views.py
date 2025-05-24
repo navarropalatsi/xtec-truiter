@@ -1,19 +1,35 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login
 
 from .models import Post
-from django.contrib.auth.models import User
 from .forms import PostForm
-from django.shortcuts import redirect
+
 
 # Create your views here.
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Inicia sessió automàticament després del registre
+            return redirect("home")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
+
+
 def home(request):
-  posts = Post.objects.all().order_by("-created_at")
-  return render(request, "home.html", {"posts": posts})
+    posts = Post.objects.all().order_by("-created_at")
+    return render(request, "home.html", {"posts": posts})
+
 
 def profile(request, username):
     user = User.objects.get(username=username)
-    posts  = user.posts.all().order_by("-created_at")
-    return render(request, "profile.html", {"username": username})
+    posts = user.posts.all().order_by("-created_at")
+    return render(request, "profile.html", {"username": username, 'posts': posts})
+
 
 def create_post(request):
     if request.method == "POST":
@@ -26,6 +42,7 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, "home.html", {"form": form})
+
 
 def like_post(request, post_id):
     post = Post.objects.get(id=post_id)

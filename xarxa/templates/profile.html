@@ -1,29 +1,43 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
-    <div class="card mb-4">
-        <div class="card-body text-center">
-            <img src="{{ user.profile.profile_picture.url }}" alt="Foto de perfil" class="rounded-circle mb-3" width="100" height="100">
-            <h3>@{{ user.username }}</h3>
-            <p class="text-muted">{{ user.profile.bio }}</p>
-            <div class="d-flex justify-content-center">
-                <span class="me-3"><strong>{{ user.posts.count }}</strong> Truits</span>
-                <span class="me-3"><strong>{{ user.profile.followers.count }}</strong> Seguidors</span>
-                <span><strong>{{ user.following.count }}</strong> Seguint</span>
-            </div>
+{% load static %}  <!-- Aquesta línia és clau! -->
+
+<div class="card mb-4">
+    <div class="card-body text-center">
+        <img
+            src="{{ user.profile.profile_picture.url }}"
+            onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
+            alt="Foto de perfil"
+            class="rounded-circle mb-3"
+            width="100"
+            height="100"
+        />
+        <h3>@{{ user.username }}</h3>
+        <p class="text-muted">{{ user.profile.bio }}</p>
+        <div class="d-flex justify-content-center">
+            <span class="me-3"
+                ><strong>{{ user.posts.count }}</strong> Truits</span
+            >
+            <span class="me-3"
+                ><strong>{{ user.profile.followers.count }}</strong>
+                Seguidors</span
+            >
+            <span><strong>{{ user.following.count }}</strong> Seguint</span>
         </div>
     </div>
+</div>
 
-    <!-- Llista de posts de l'usuari -->
-    {% for post in posts %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <p class="card-text">{{ post.content }}</p>
-                <div class="d-flex">
-                    <small class="text-muted">{{ post.created_at|date:"d/m/Y H:i" }}</small>
-                    <span class="ms-auto">❤️ {{ post.likes.count }}</span>
-                </div>
-            </div>
+<!-- Llista de posts de l'usuari -->
+{% for post in posts %}
+<div class="card mb-3">
+    <div class="card-body">
+        <p class="card-text">{{ post.content }}</p>
+        <div class="d-flex">
+            <small class="text-muted"
+                >{{ post.created_at|date:"d/m/Y H:i" }}</small
+            >
+            <span class="ms-auto">❤️ {{ post.likes.count }}</span>
         </div>
-    {% endfor %}
-{% endblock %}
+    </div>
+</div>
+{% endfor %} {% endblock %}
