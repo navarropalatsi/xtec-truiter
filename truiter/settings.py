@@ -125,3 +125,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "home"  # Nom de la URL de la teva pàgina principal
+LOGOUT_REDIRECT_URL = "home"  # Nom de la URL de la teva pàgina principal
+
+MEDIA_URL = "/media/"  # URL per accedir als arxius pujats
+MEDIA_ROOT = BASE_DIR / "media"  # Ruta on es guarden els arxius pujats

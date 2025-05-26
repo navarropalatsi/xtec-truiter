@@ -26,9 +26,14 @@ def home(request):
 
 
 def profile(request, username):
-    user = User.objects.get(username=username)
-    posts = user.posts.all().order_by("-created_at")
-    return render(request, "profile.html", {"username": username, 'posts': posts})
+    watched_user = User.objects.get(username=username)
+    if watched_user.profile.followers.filter(id=watched_user.id).exists():
+        watched_user.profile.followers.remove(watched_user)  # Elimina l'usuari de si mateix si és seguidor
+
+    posts = watched_user.posts.all().order_by("-created_at")
+    return render(
+        request, "profile.html", {"watched_user": watched_user, "posts": posts, 'is_following': request.user in watched_user.profile.followers.all() if request.user.is_authenticated else False}
+    )
 
 
 def create_post(request):
@@ -44,7 +49,23 @@ def create_post(request):
     return render(request, "home.html", {"form": form})
 
 
+def follow_user(request, username):
+    user_to_follow = User.objects.get(username=username)
+    user_to_follow.profile.followers.add(request.user)
+    return redirect("profile", username=username)
+
+
+def unfollow_user(request, username):
+    user_to_unfollow = User.objects.get(username=username)
+    user_to_unfollow.profile.followers.remove(request.user)
+    return redirect("profile", username=username)
+
+
 def like_post(request, post_id):
     post = Post.objects.get(id=post_id)
-    post.likes.add(request.user)
-    return redirect("home")
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)  # Si ja li agrada, elimina el like
+    else:
+        post.likes.add(request.user)
+    next = request.POST.get('next', '/')
+    return redirect(next)

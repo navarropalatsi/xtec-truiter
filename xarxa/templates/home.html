@@ -48,6 +48,7 @@
         <div class="d-flex">
             <form method="post" action="{% url 'like_post' post.id %}">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
                 <button
                     type="submit"
                     class="btn btn-sm btn-outline-danger me-2"

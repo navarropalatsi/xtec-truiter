@@ -14,6 +14,8 @@ class Profile(models.Model):
     followers = models.ManyToManyField(
         User, related_name="following", blank=True
     )  # Autosseguiment
+    def __str__(self):
+        return f"{self.user.username}"
 
 
 class Post(models.Model):
@@ -51,3 +53,5 @@ class Notification(models.Model):
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.from_user.username} {self.notification_type} to {self.to_user.username} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"

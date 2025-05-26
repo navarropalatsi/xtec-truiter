@@ -1,28 +1,59 @@
-{% extends 'base.html' %} {% block content %}
-
-{% load static %}  <!-- Aquesta línia és clau! -->
+{% extends 'base.html' %} {% block content %} {% load static %}
+<!-- Aquesta línia és clau! -->
 
 <div class="card mb-4">
     <div class="card-body text-center">
         <img
-            src="{{ user.profile.profile_picture.url }}"
+            src="{{watched_user.profile.profile_picture.url }}"
             onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
             alt="Foto de perfil"
             class="rounded-circle mb-3"
             width="100"
             height="100"
         />
-        <h3>@{{ user.username }}</h3>
-        <p class="text-muted">{{ user.profile.bio }}</p>
+        <h3>@{{ watched_user.username }}</h3>
+        <p class="text-muted">{{ watched_user.profile.bio }}</p>
         <div class="d-flex justify-content-center">
             <span class="me-3"
-                ><strong>{{ user.posts.count }}</strong> Truits</span
+                ><strong>{{ watched_user.posts.count }}</strong> Truits</span
             >
             <span class="me-3"
-                ><strong>{{ user.profile.followers.count }}</strong>
+                ><strong>{{ watched_user.profile.followers.count }}</strong>
                 Seguidors</span
             >
-            <span><strong>{{ user.following.count }}</strong> Seguint</span>
+            <span><strong>{{ watched_user.following.count }}</strong> Seguint</span>
+        </div>
+
+        <div class="mt-3">
+            {% if user.is_authenticated and watched_user.username != user.username %}
+            {% if is_following %}
+            <form
+                method="post"
+                action="{% url 'unfollow_user' watched_user.username %}"
+            >
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-secondary me-2"
+                >
+                    Deixar de seguir
+                </button>
+            </form>
+            {% else %}
+            <form
+                method="post"
+                action="{% url 'follow_user' watched_user.username %}"
+            >
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-primary me-2"
+                >
+                    Seguir usuari
+                </button>
+            </form>
+            {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>
@@ -31,12 +62,38 @@
 {% for post in posts %}
 <div class="card mb-3">
     <div class="card-body">
-        <p class="card-text">{{ post.content }}</p>
-        <div class="d-flex">
-            <small class="text-muted"
+        <div class="d-flex align-items-center mb-2">
+            <img
+                src="{{ post.author.profile.profile_picture.url }}"
+                onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
+                alt="Foto de perfil"
+                class="rounded-circle me-2"
+                width="40"
+                height="40"
+            />
+            <a
+                href="{% url 'profile' post.author.username %}"
+                class="text-decoration-none"
+            >
+                <strong>@{{ post.author.username }}</strong>
+            </a>
+            <small class="text-muted ms-auto"
                 >{{ post.created_at|date:"d/m/Y H:i" }}</small
             >
-            <span class="ms-auto">❤️ {{ post.likes.count }}</span>
+        </div>
+        <p class="card-text">{{ post.content }}</p>
+        <div class="d-flex">
+            <form method="post" action="{% url 'like_post' post.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger me-2"
+                >
+                    ❤️ {{ post.likes.count }}
+                </button>
+            </form>
+            <a href="#" class="btn btn-sm btn-outline-secondary">💬 Comentar</a>
         </div>
     </div>
 </div>

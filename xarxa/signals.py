@@ -14,9 +14,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-  if instance.profile is not None:
-    """Guarda el Profile quan es guarda el User."""
-    instance.profile.save()
-  else:
-    """Si no hi ha un Profile, crea'n un nou."""
+  try:
+    instance.profile.save()  # Intenta guardar el perfil
+  except Profile.DoesNotExist:
+    # Si no existeix, crea'l (cas excepcional)
     Profile.objects.create(user=instance)
