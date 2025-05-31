@@ -35,6 +35,9 @@ def profile(request, username):
         request, "profile.html", {"watched_user": watched_user, "posts": posts, 'is_following': request.user in watched_user.profile.followers.all() if request.user.is_authenticated else False}
     )
 
+def post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    return render(request, "post.html", {"post": post})
 
 def create_post(request):
     if request.method == "POST":
@@ -49,6 +52,23 @@ def create_post(request):
     return render(request, "home.html", {"form": form})
 
 
+def like_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)  # Si ja li agrada, elimina el like
+    else:
+        post.likes.add(request.user)
+    next = request.POST.get("next", "/")
+    return redirect(next)
+
+def add_comment(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.method == "POST":
+        comment_text = request.POST.get("comment")
+        if comment_text:
+            post.comments.create(author=request.user, text=comment_text)
+    return redirect("post", post_id=post_id)
+
 def follow_user(request, username):
     user_to_follow = User.objects.get(username=username)
     user_to_follow.profile.followers.add(request.user)
@@ -60,12 +80,13 @@ def unfollow_user(request, username):
     user_to_unfollow.profile.followers.remove(request.user)
     return redirect("profile", username=username)
 
-
-def like_post(request, post_id):
-    post = Post.objects.get(id=post_id)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)  # Si ja li agrada, elimina el like
-    else:
-        post.likes.add(request.user)
-    next = request.POST.get('next', '/')
-    return redirect(next)
+def repost_post(request, post_id):
+    original_post = Post.objects.get(id=post_id)
+    if request.method == "POST":
+        repost = Post.objects.create(
+            author=request.user,
+            content=original_post.content,
+            repost=original_post
+        )
+        return redirect("post", post_id=repost.id)
+    return redirect("post", post_id=post_id)
