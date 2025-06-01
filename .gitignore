@@ -1,12 +1,7 @@
 *.pyc
 /env/
 /venv/
-/static/*
-
 /staticfiles/*
-/staticfiles/*
-!/staticfiles/profiles
-
 /media/*
 .env
 *.sqlite3
