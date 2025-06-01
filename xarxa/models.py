@@ -27,6 +27,9 @@ class Post(models.Model):
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )  # Per repostar
 
+    def repost_count(self):
+        return Post.objects.filter(repost=self).count()
+
     def __str__(self):
         return f"{self.author.username}: \"{self.content}\" - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 

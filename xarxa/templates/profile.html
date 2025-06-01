@@ -1,100 +1,71 @@
-{% extends 'base.html' %} {% block content %} {% load static %}
-<!-- Aquesta línia és clau! -->
+{% extends 'base.html' %} 
+{% block content %} 
+{% load static %}
 
-<div class="card mb-4">
-    <div class="card-body text-center">
-        <img
-            src="{{watched_user.profile.profile_picture.url }}"
-            onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
-            alt="Foto de perfil"
-            class="rounded-circle mb-3"
-            width="100"
-            height="100"
-        />
-        <h3>@{{ watched_user.username }}</h3>
-        <p class="text-muted">{{ watched_user.profile.bio }}</p>
-        <div class="d-flex justify-content-center">
-            <span class="me-3"
-                ><strong>{{ watched_user.posts.count }}</strong> Truits</span
-            >
-            <span class="me-3"
-                ><strong>{{ watched_user.profile.followers.count }}</strong>
-                Seguidors</span
-            >
-            <span><strong>{{ watched_user.following.count }}</strong> Seguint</span>
-        </div>
-
-        <div class="mt-3">
-            {% if user.is_authenticated and watched_user.username != user.username %}
-            {% if is_following %}
-            <form
-                method="post"
-                action="{% url 'unfollow_user' watched_user.username %}"
-            >
-                {% csrf_token %}
-                <button
-                    type="submit"
-                    class="btn btn-sm btn-outline-secondary me-2"
-                >
-                    Deixar de seguir
-                </button>
-            </form>
-            {% else %}
-            <form
-                method="post"
-                action="{% url 'follow_user' watched_user.username %}"
-            >
-                {% csrf_token %}
-                <button
-                    type="submit"
-                    class="btn btn-sm btn-outline-primary me-2"
-                >
-                    Seguir usuari
-                </button>
-            </form>
-            {% endif %}
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<!-- Llista de posts de l'usuari -->
-{% for post in posts %}
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="d-flex align-items-center mb-2">
+<div class="container w-75 mt-3">
+    <div class="card mb-4">
+        <div class="card-body text-center">
             <img
-                src="{{ post.author.profile.profile_picture.url }}"
+                src="{{ watched_user.profile.profile_picture.url }}"
                 onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
                 alt="Foto de perfil"
-                class="rounded-circle me-2"
-                width="40"
-                height="40"
+                class="rounded-circle mb-3"
+                width="100"
+                height="100"
             />
-            <a
-                href="{% url 'profile' post.author.username %}"
-                class="text-decoration-none"
-            >
-                <strong>@{{ post.author.username }}</strong>
-            </a>
-            <small class="text-muted ms-auto"
-                >{{ post.created_at|date:"d/m/Y H:i" }}</small
-            >
-        </div>
-        <p class="card-text">{{ post.content }}</p>
-        <div class="d-flex">
-            <form method="post" action="{% url 'like_post' post.id %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button
-                    type="submit"
-                    class="btn btn-sm btn-outline-danger me-2"
+            <h3>@{{ watched_user.username }}</h3>
+            <p class="text-muted">{{ watched_user.profile.bio }}</p>
+            <div class="d-flex justify-content-center">
+                <span class="me-3"
+                    ><strong>{{ watched_user.posts.count }}</strong> Truits</span
                 >
-                    ❤️ {{ post.likes.count }}
-                </button>
-            </form>
-            <a href="{% url 'post' post.id %}" class="btn btn-sm btn-outline-secondary">Veure sencer</a>
+                <span class="me-3"
+                    ><strong>{{ watched_user.profile.followers.count }}</strong>
+                    Seguidors</span
+                >
+                <span><strong>{{ watched_user.following.count }}</strong> Seguint</span>
+            </div>
+
+            <div class="mt-3">
+                {% if user.is_authenticated and watched_user.username != user.username %}
+                {% if is_following %}
+                <form
+                    method="post"
+                    action="{% url 'unfollow_user' watched_user.username %}"
+                >
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-secondary me-2"
+                    >
+                        Deixar de seguir
+                    </button>
+                </form>
+                {% else %}
+                <form
+                    method="post"
+                    action="{% url 'follow_user' watched_user.username %}"
+                >
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-primary me-2"
+                    >
+                        Seguir usuari
+                    </button>
+                </form>
+                {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-{% endfor %} {% endblock %}
+
+<div class="container w-50 mt-3">
+    <!-- Llista de posts de l'usuari -->
+    {% for post in posts %}
+    {% include 'post_template.html' with post=post %}
+    {% endfor %}
+</div>
+
+{% endblock %}

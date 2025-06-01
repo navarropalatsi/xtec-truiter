@@ -88,5 +88,5 @@ def repost_post(request, post_id):
             content=original_post.content,
             repost=original_post
         )
-        return redirect("post", post_id=repost.id)
-    return redirect("post", post_id=post_id)
+    next = request.POST.get("next", "/")
+    return redirect(next)
