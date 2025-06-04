@@ -7,7 +7,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Relació 1 a 1
     bio = models.TextField(max_length=500, blank=True)
     profile_picture = models.ImageField(
-        upload_to="profiles/", blank=True, null=True, default="profiles/default.jpg"
+        upload_to="media/", blank=True, null=True, default="static/profiles/default.jpg"
     )
     location = models.CharField(max_length=100, blank=True)
     website = models.URLField(blank=True)
