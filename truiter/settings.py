@@ -115,10 +115,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Ruta on es recullen els arxius estàtics per producció
+STATIC_URL = 'static/' 
+STATIC_ROOT = BASE_DIR / "static"  # Ruta on es recullen els arxius estàtics per producció
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Ruta on es guarden els arxius estàtics
+    BASE_DIR / "staticfiles",  # Ruta on es guarden els arxius estàtics
 ]
 
 # Default primary key field type
