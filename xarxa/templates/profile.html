@@ -2,9 +2,20 @@
 {% block content %} 
 {% load static %}
 
+<style>
+    .absolute-top-right {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+
 <div class="container w-75 mt-3">
     <div class="card mb-4">
         <div class="card-body text-center">
+            {% if user.is_authenticated and watched_user.username == user.username %}
+            <span class="absolute-top-right"><a href="{% url 'update_profile_form' watched_user.username %}" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-pencil"></i> Actualitzar</a></span>
+            {% endif %}
             <img
                 src="{{ watched_user.profile.profile_picture.url }}"
                 onerror="this.onerror=null; this.src='{% static 'profiles/default.jpg' %}'"
